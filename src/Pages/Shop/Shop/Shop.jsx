@@ -1,17 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Shop.css";
 import ProductItem from "../Product/ProductItem.jsx";
 import Cart from "../../../components/Cart/Cart.jsx";
 import { addToDb, getShoppingCart } from "../../../JS-Files/fakedb.js";
+import { AuthContext } from "../../../Provider/AuthProvider.jsx";
+import { useInView } from "react-intersection-observer";
+import axios from "axios";
+import ProductItemSkl from "../Product/ProductItemSkl/ProductItemSkl.jsx";
 // import { addToDb, getShoppingCart } from '../utilities/fakedb';
 
 const Shop = () => {
+  const { baseUrl } = useContext(AuthContext);
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+  // console.log("Inview: ", inView);
+
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(8);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (inView) {
+      setPage(page + 1);
+    }
+  }, [inView]);
+
   const [products, setProducts] = useState([]);
   useEffect(() => {
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
+    axios.get(`${baseUrl}/products?page=${page}`).then((res) => {
+      const comeData = res.data;
+      const newData = [...products, ...comeData];
+      setProducts(newData);
+      setLoading(false);
+    });
+  }, [page]);
 
   ///Retrive from Cart start
   useEffect(() => {
@@ -51,7 +74,6 @@ const Shop = () => {
   const [cart, setCart] = useState([]);
   const handleAddToCart = (product) => {
     //Previous
-    console.log("Click: ", product);
     const newCart = [...cart, product];
     setCart(newCart);
     addToDb(product.id);
@@ -76,17 +98,35 @@ const Shop = () => {
   };
   // Add to Cart End
 
+  if (loading) {
+    return (
+      <div className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+        {[1, 2, 3, 4, 5, 6].map((a, idx) => (
+          <ProductItemSkl key={idx} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[5fr_1fr]">
-      <div className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* <h2>Products Comming Here: {products.length} </h2> */}
-        {products.map((product) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            handleAddToCart={handleAddToCart}
-          ></ProductItem>
-        ))}
+      <div className="">
+        {products.length > 0 && (
+          <div>
+            <div className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+              {products.map((product) => (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  handleAddToCart={handleAddToCart}
+                ></ProductItem>
+              ))}
+            </div>
+            <div className="text-center mt-4" ref={ref}>
+              <span className="loading loading-spinner loading-lg bg-warning"></span>
+            </div>
+          </div>
+        )}
       </div>
       <div className="cart_Container">
         <Cart cart={cart}></Cart>

@@ -9,9 +9,7 @@ import {
 
 import Swal from "sweetalert2";
 import axios from "axios";
-
-import { app } from "../JS-File/firebase/firebase.config";
-import decode from "../JS-File/decode";
+import app from "../JS-Files/firebase/firebase.config";
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -21,7 +19,8 @@ const AuthProvider = ({ children }) => {
   const [dbUser, setDbUser] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const baseUrl = "http://localhost:5000";
+  // const baseUrl = "http://localhost:7000";
+  const baseUrl = "https://ema-john-server-khaki.vercel.app";
 
   /**
    * Log in by gmail
@@ -65,23 +64,7 @@ const AuthProvider = ({ children }) => {
   /**
    * Check db User start
    */
-  const [localstorageDep, setLocalStorageDep] = useState(true);
-  const [mail, setMail] = useState("");
-  // useEffect(() => {
-  //   const storedEmail = localStorage.getItem("email");
-  //   setMail(storedEmail);
-  // }, []);
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("email");
-    const getDecodeEmail = decode(storedEmail);
-    setMail(getDecodeEmail);
 
-    if (mail) {
-      axios.get(`${baseUrl}/user/${mail}`).then((res) => {
-        setDbUser(res.data);
-      });
-    }
-  }, [mail, localstorageDep]);
   // console.log("Current DB User: ", dbUser);
 
   /**
@@ -109,9 +92,6 @@ const AuthProvider = ({ children }) => {
   const authInfo = {
     baseUrl,
     user,
-    dbUser,
-    localstorageDep,
-    setLocalStorageDep,
     loading,
     handleLogIn,
     handleLogOut,
