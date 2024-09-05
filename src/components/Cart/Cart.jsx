@@ -1,0 +1,40 @@
+import React from "react";
+import "./Cart.css";
+
+const Cart = ({ cart }) => {
+  console.log(cart);
+
+  let totalPrice = 0;
+  let totalShipping = 0;
+  let quantity = 0;
+  for (const product of cart) {
+    totalPrice = totalPrice + product.price * product.quantity;
+    totalShipping = totalShipping + product.shipping;
+
+    if (product.quantity === 0) {
+      product.quantity = 1;
+      quantity = 1;
+    } else {
+      console.log("Old Quantity: ", quantity);
+      quantity = quantity + product.quantity;
+      console.log("Now Quantity: ", quantity);
+    }
+  }
+
+  const tax = (totalPrice * 7) / 100;
+  const grandTotal = totalPrice + totalShipping + tax;
+
+  return (
+    <div className="cart">
+      <h4 className="text-xl font-bold text-center mb-10">Order Summery</h4>
+      <p>Selected Items: {quantity} </p>
+      {(quantity = 0)}
+      <p>Total Price: ${totalPrice} </p>
+      <p>Total Shipping: ${totalShipping} </p>
+      <p>Tax: ${tax.toFixed(2)}</p>
+      <h6>Grand Total: ${grandTotal.toFixed(2)} </h6>
+    </div>
+  );
+};
+
+export default Cart;

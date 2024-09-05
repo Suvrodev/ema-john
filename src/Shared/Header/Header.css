@@ -1,0 +1,20 @@
+.header{
+    height: 80px;
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 100px;
+}
+.LK{
+    display: flex;
+    gap: 20px;
+}
+.LK a{
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+}
+.LK a:hover{
+    color: orange;
+}

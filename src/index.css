@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+  color: black;
+  background-color: whitesmoke;
+}
+
+.pColor {
+  background-color: #ffe0b3;
+}
+.sColor {
+  background-color: #ff9900;
+}
+.oColor {
+  background-color: #ff4500;
+}
